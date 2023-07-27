@@ -73,19 +73,20 @@ if str(response.status_code) == '201':
    while not done:
       call_nb += 1
       print('Attempt {} to poll status URL'.format(call_nb))
-      poll = requests.get(poll_url, headers=headers)
-      if json.loads(poll.text)['status'] == 'in progress':
+      response = requests.get(poll_url, headers=headers)
+      status = json.loads(response.text)['status']
+      if status == 'in progress':
          done = False
          sleep(3)
          print('pausing 3 seconds')
-      elif json.loads(poll.text)['status'] == 'done':
+      elif status == 'done':
          done = True
          # ADD YOUR OWN LOGIC HERE TO SAVE THE FILE
          print('download docx from here: \n', 
-               json.loads(poll.text)['asset']['downloadUri'])
+               json.loads(response.text)['asset']['downloadUri'])
       else:
          # some problem, see response text and headers
          done = True
-         print(poll.text)
-         print(poll.headers)
+         print(response.text)
+         print(response.headers)
 
